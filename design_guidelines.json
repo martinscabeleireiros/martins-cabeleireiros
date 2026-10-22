@@ -1,0 +1,168 @@
+{
+  "app_name": "Martins Cabeleireiro",
+  "personality": "6 Glass / Luxe DARK",
+  "personality_one_liner": "An ultra-premium, cinematic booking experience with deep black backgrounds, delicate gold accents, and frosted glass overlays.",
+  "color": {
+    "surface": "#050404",
+    "onSurface": "#F5F2E9",
+    "surfaceSecondary": "#1A1613",
+    "onSurfaceSecondary": "#E8E2D5",
+    "surfaceTertiary": "#2A241F",
+    "onSurfaceTertiary": "#D1C7B3",
+    "surfaceInverse": "#F5F2E9",
+    "onSurfaceInverse": "#050404",
+    "brand": "#C5A059",
+    "brandPrimary": "#C5A059",
+    "onBrandPrimary": "#050404",
+    "brandSecondary": "#917B46",
+    "onBrandSecondary": "#F5F2E9",
+    "brandTertiary": "#3E331B",
+    "onBrandTertiary": "#E2C889",
+    "success": "#3C5A3E",
+    "onSuccess": "#A3CBA6",
+    "warning": "#7A5A22",
+    "onWarning": "#E5C282",
+    "error": "#6B2A2A",
+    "onError": "#EDA5A5",
+    "info": "#2B4A5F",
+    "onInfo": "#9FCAE6",
+    "border": "#2E2721",
+    "borderStrong": "#4A4036",
+    "divider": "#1F1A16",
+    "muted": "#8C8477",
+    "onBrand": "#050404"
+  },
+  "typography": {
+    "displayFontFamily": "Cormorant Garamond",
+    "textFontFamily": "Satoshi",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous spacing. Allow the black backgrounds to breathe. Do not crowd elements.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": 0,
+  "navigation": "stack_only",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": true,
+    "do's": [
+      "Sticky headers over scrolling content",
+      "Floating Action Buttons (like the WhatsApp button)",
+      "Bottom-sheet handles and headers",
+      "Featured service cards overlay"
+    ],
+    "dont's": [
+      "Form fields",
+      "Body text regions",
+      "Every single list row"
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Home",
+      "purpose": "Showcase the salon's brand, slogan, info, and a luxurious list of 14 services.",
+      "states": {
+        "loading": "Centered gold spinner over black background.",
+        "empty": "N/A - services are static.",
+        "error": "Error message with a retry button in gold."
+      },
+      "layout": "Cinematic hero section with the salon logo (using local asset if provided, otherwise styled text) and slogan. Blurred background photo with gradient scrim. Below, address and hours. A list of 14 services with price and duration (single column, luxurious padding). A floating glass FAB for WhatsApp pinned at the bottom right. Sticky 'Book Now' CTA at bottom."
+    },
+    {
+      "name": "Booking Flow",
+      "purpose": "A seamless step-by-step appointment booking experience.",
+      "states": {
+        "loading": "Skeleton loading for available dates/times.",
+        "empty": "No slots available message with 'Pick another date'.",
+        "error": "Failed to load slots, tap to retry."
+      },
+      "layout": "Step 1: Select Service. Step 2: Date Picker (horizontal elegant scroll). Step 3: Time Slot Grid (glass pills). Step 4: Client Info Form (Name, Phone). Bottom-anchored sticky 'Confirm' CTA."
+    },
+    {
+      "name": "Admin Dashboard",
+      "purpose": "Secure hub for the 2 admins to manage bookings, clients, and settings.",
+      "states": {
+        "loading": "Spinner.",
+        "empty": "No appointments today.",
+        "error": "Authentication failed."
+      },
+      "layout": "Login screen with password input. Dashboard showing today's agenda (Day view). Navigation links to 'Clients', 'History', and 'Settings' (to block days/holidays)."
+    },
+    {
+      "name": "Admin Clients & History",
+      "purpose": "Manage the client base, import from .vcf, and view visit history.",
+      "states": {
+        "loading": "Loading client list...",
+        "empty": "No clients found. Import or add manually.",
+        "error": "Error importing contacts."
+      },
+      "layout": "Search bar at top. List of clients. Top action to 'Import .vcf / Phone Contacts'. Tapping a client opens a detail sheet with their visit history."
+    }
+  ],
+  "images": {
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1621645582931-d1d3e6564943?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTV8MHwxfHNlYXJjaHwzfHxsdXh1cnklMjBiYXJiZXJzaG9wJTIwZGFyayUyMGludGVyaW9yfGVufDB8fHx8MTc5MjYyNjExNnww&ixlib=rb-4.1.0&q=85",
+      "alt": "Luxury barbershop dark interior with black and silver chair"
+    },
+    "empty_state_tools": {
+      "url": "https://images.pexels.com/photos/19482851/pexels-photo-19482851.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Close view of gold barber tools on a dark countertop"
+    },
+    "service_placeholder": {
+      "url": "https://images.pexels.com/photos/19225277/pexels-photo-19225277.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Luxurious black barber chair"
+    }
+  },
+  "haptics": {
+    "events": {
+      "cta_press": "impactMedium",
+      "time_slot_select": "selection",
+      "date_select": "selection",
+      "tab_change": "selection",
+      "success_confirm": "notificationSuccess",
+      "error_alert": "notificationError"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly follow the '6 Glass / Luxe DARK' personality. The app should feel highly premium, cinematic, and expensive.",
+    "Use deep black (#050404) for the main surface. DO NOT use grey as the main background.",
+    "Gold (#C5A059) is the only accent color. Do not introduce blues, purples, or other colors.",
+    "Ensure 'Cormorant Garamond' is used for headings and large display texts to establish the luxury feel. Use 'Satoshi' for body text and UI labels.",
+    "The user mentioned an 'attached logo'—since we don't have file access, provide an implementation that can easily swap in a local asset (e.g., require('./assets/logo.png')). Make sure it sits prominently at the top over the dark hero background.",
+    "For any text overlaying the hero background or images, ALWAYS apply the gradient-to-dark scrim pattern (Layer 0: image, Layer 1: linear gradient to #050404, Layer 2: text) to guarantee readability.",
+    "The floating WhatsApp button MUST be implemented natively using safe areas and bottom spacing, ideally wrapped in a glass container.",
+    "The booking flow requires a sticky 'Confirm' CTA anchored at the bottom inside a KeyboardAvoidingView.",
+    "Ensure the Admin agenda accurately maps time slots and blocks exactly the duration of the selected service."
+  ]
+}
