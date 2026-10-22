@@ -9,6 +9,7 @@ FastAPI + MongoDB (/api), Expo Router. Admin JWT (bcrypt). Timezone America/Port
 - Contatos.vcf pre-imported (1202 clients)
 - Booking name field autocomplete from client base (admin logged in only); selecting fills name + phone; manual entry kept
 - PWA: public/manifest.json, public/sw.js (network-first, /api never cached), icons from logo, head tags (+html.tsx + runtime src/pwa.web.ts)
+- Delete (permanent) for cancelled appointments: DELETE /api/admin/appointments/{id} (only status cancelado); admin opens on Agenda (today)
 - Admin credentials: martins / #Agora100%, elizama / #Zama2020 (applied in DB)
 ## Backlog
 - P1: Admin edit/reschedule appointment; multiple professionals agenda

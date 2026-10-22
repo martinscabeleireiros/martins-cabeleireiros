@@ -345,6 +345,19 @@ async def update_appointment(appt_id: str, body: StatusIn, admin=Depends(current
     return Appointment.from_mongo(doc)
 
 
+@api.delete("/admin/appointments/{appt_id}")
+async def delete_appointment(appt_id: str, admin=Depends(current_admin)):
+    if not ObjectId.is_valid(appt_id):
+        raise HTTPException(404, "Agendamento não encontrado")
+    doc = await db.appointments.find_one({"_id": ObjectId(appt_id)})
+    if not doc:
+        raise HTTPException(404, "Agendamento não encontrado")
+    if doc["status"] != "cancelado":
+        raise HTTPException(400, "Só é possível excluir agendamentos cancelados")
+    await db.appointments.delete_one({"_id": ObjectId(appt_id)})
+    return {"ok": True}
+
+
 @api.get("/admin/reminders")
 async def reminders(admin=Depends(current_admin)):
     tomorrow = (datetime.now(TZ).date() + timedelta(days=1)).isoformat()

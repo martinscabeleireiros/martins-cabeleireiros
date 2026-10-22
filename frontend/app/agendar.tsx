@@ -1,5 +1,5 @@
 import Ionicons from "@react-native-vector-icons/ionicons";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
@@ -21,6 +21,7 @@ export default function Booking() {
   const params = useLocalSearchParams<{ service?: string }>();
   const insets = useSafeAreaInsets();
   const toast = useToast();
+  const qc = useQueryClient();
   const [serviceId, setServiceId] = useState<string | undefined>(params.service);
   const [date, setDate] = useState(() => {
     let d = dayjs().hour() >= 19 ? dayjs().add(1, "day") : dayjs();
@@ -61,6 +62,8 @@ export default function Booking() {
       });
       if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setDone(a);
+      qc.invalidateQueries({ queryKey: ["admin-appts"] });
+      qc.invalidateQueries({ queryKey: ["admin-reminders"] });
       openWhatsApp(SALON.whatsapp, confirmText(a));
     } catch (e: any) {
       toast(e.message, "error");
@@ -83,7 +86,7 @@ export default function Booking() {
         <Text style={styles.doneMuted}>Envie a mensagem no WhatsApp para confirmar seu horário.</Text>
         <View style={{ width: "100%", gap: spacing.md, marginTop: spacing.xl }}>
           <GoldButton testID="booking-whatsapp-confirm-button" icon="logo-whatsapp" title="Confirmar no WhatsApp" onPress={() => openWhatsApp(SALON.whatsapp, confirmText(done))} />
-          <GoldButton testID="booking-back-home-button" variant="outline" title="Voltar ao início" onPress={() => router.replace("/")} />
+          <GoldButton testID="booking-back-home-button" variant="outline" title="Voltar ao início" onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))} />
         </View>
       </View>
     );

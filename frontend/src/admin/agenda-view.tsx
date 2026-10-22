@@ -35,6 +35,17 @@ export function AgendaView() {
     }
   };
 
+  const remove = async (a: Appointment) => {
+    try {
+      await api(`/admin/appointments/${a.id}`, { method: "DELETE", auth: true });
+      qc.invalidateQueries({ queryKey: ["admin-appts"] });
+      qc.invalidateQueries({ queryKey: ["client"] });
+      toast("Agendamento excluído permanentemente", "success");
+    } catch (e: any) {
+      toast(e.message, "error");
+    }
+  };
+
   const shift = (n: number) => setDate(dayjs(date).add(n, "day").format("YYYY-MM-DD"));
 
   return (
@@ -75,7 +86,12 @@ export function AgendaView() {
                     <CardAction testID={`appointment-cancel-${item.id}`} icon="close-circle-outline" label="Cancelar" onPress={() => setStatus(item, "cancelado")} />
                   </>
                 ) : (
-                  <CardAction testID={`appointment-reopen-${item.id}`} icon="refresh-outline" label="Reabrir" onPress={() => setStatus(item, "agendado")} />
+                  <>
+                    <CardAction testID={`appointment-reopen-${item.id}`} icon="refresh-outline" label="Reabrir" onPress={() => setStatus(item, "agendado")} />
+                    {item.status === "cancelado" && (
+                      <CardAction testID={`appointment-delete-${item.id}`} icon="trash-outline" label="Excluir" onPress={() => remove(item)} />
+                    )}
+                  </>
                 )
               }
             />

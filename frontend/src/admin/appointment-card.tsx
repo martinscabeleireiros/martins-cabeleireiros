@@ -22,7 +22,7 @@ export function AppointmentCard({
 }) {
   const st = STATUS[a.status];
   return (
-    <View style={[styles.card, a.status === "cancelado" && { opacity: 0.55 }]} testID={`appointment-card-${a.id}`}>
+    <View style={[styles.card, a.status === "cancelado" && { borderColor: colors.error }]} testID={`appointment-card-${a.id}`}>
       <View style={styles.timeCol}>
         <Text style={styles.time}>{a.time}</Text>
         <View style={styles.timeLine} />
