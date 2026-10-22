@@ -11,7 +11,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { api } from "@/src/api";
 import { useToast } from "@/src/components/toast";
 import { GoldButton, ScreenHeader } from "@/src/components/ui";
-import { Appointment, formatDateLong, formatDuration, formatPrice, openWhatsApp, SALON, Service } from "@/src/constants";
+import { ClientAutocomplete } from "@/src/components/client-autocomplete";
+import { Appointment, formatDateLong, formatDuration, formatPhone, formatPrice, openWhatsApp, SALON, Service } from "@/src/constants";
 import { colors, fonts, radius, spacing } from "@/src/theme";
 
 const tap = () => Platform.OS !== "web" && Haptics.selectionAsync();
@@ -155,14 +156,10 @@ export default function Booking() {
 
         <Text style={styles.step}>4. Seus dados</Text>
         <View style={styles.form}>
-          <TextInput
-            testID="booking-name-input"
-            placeholder="Seu nome"
-            placeholderTextColor={colors.muted}
-            value={name}
-            onChangeText={setName}
-            style={styles.input}
-            returnKeyType="next"
+          <ClientAutocomplete
+            name={name}
+            onChangeName={setName}
+            onSelect={(c) => { setName(c.name); setPhone(formatPhone(c.phone)); }}
           />
           <TextInput
             testID="booking-phone-input"

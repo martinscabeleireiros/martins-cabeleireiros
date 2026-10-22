@@ -7,6 +7,7 @@ FastAPI + MongoDB (/api), Expo Router. Admin JWT (bcrypt). Timezone America/Port
 - Home, booking flow, success + WhatsApp confirm
 - Admin: login, Agenda (day nav, concluir/cancelar), Lembretes (tomorrow), Clientes (search, paging, .vcf import, phone import native / Chrome Contact Picker, add, detail w/ history), Ajustes (block days, change password)
 - Contatos.vcf pre-imported (1202 clients)
+- Booking name field autocomplete from client base (admin logged in only); selecting fills name + phone; manual entry kept
 - Admin credentials: martins / #Agora100%, elizama / #Zama2020 (applied in DB)
 ## Backlog
 - P1: Admin edit/reschedule appointment; multiple professionals agenda
