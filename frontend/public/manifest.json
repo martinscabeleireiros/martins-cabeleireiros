@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "Martins Cabeleireiro",
+  "short_name": "Martins",
+  "description": "Martins Cabeleireiro, produzindo beleza com qualidade. Agende seu horário online.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050404",
+  "theme_color": "#050404",
+  "categories": ["lifestyle", "beauty"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -27,7 +27,13 @@
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "Martins Cabeleireiro",
+      "shortName": "Martins",
+      "lang": "pt-BR",
+      "themeColor": "#050404",
+      "backgroundColor": "#050404",
+      "display": "standalone"
     },
     "plugins": [
       "expo-router",

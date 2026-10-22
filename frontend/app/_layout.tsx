@@ -8,12 +8,14 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 
 import { ErrorBoundary } from "@/src/components/error-boundary";
 import { ToastProvider } from "@/src/components/toast";
+import { setupPwa } from "@/src/pwa";
 import { queryClient } from "@/src/query-client";
 import { colors } from "@/src/theme";
 
 // Disable logbox errors etc so that users can see the app
 // and agent works as expected.
 LogBox.ignoreAllLogs(true)
+setupPwa();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({ Cormorant: require("../assets/fonts/Cormorant.ttf") });
