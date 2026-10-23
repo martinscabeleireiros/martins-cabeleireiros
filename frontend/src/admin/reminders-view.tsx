@@ -3,7 +3,7 @@ import React from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { AppointmentCard, EmptyState } from "@/src/admin/appointment-card";
+import { AppointmentCard, CardAction, EmptyState } from "@/src/admin/appointment-card";
 import { api } from "@/src/api";
 import { Appointment, formatDateLong, SALON } from "@/src/constants";
 import { colors, fonts, spacing } from "@/src/theme";
@@ -26,8 +26,15 @@ export function RemindersView() {
     qc.invalidateQueries({ queryKey: ["admin-reminders"] });
   };
 
+  const toggleConfirm = async (a: Appointment) => {
+    await api(`/admin/appointments/${a.id}`, { method: "PATCH", auth: true, body: { confirmed: !a.confirmed } }).catch(() => {});
+    qc.invalidateQueries({ queryKey: ["admin-reminders"] });
+    qc.invalidateQueries({ queryKey: ["admin-appts"] });
+  };
+
   const items = q.data?.items ?? [];
   const pending = items.filter((a) => !a.reminded).length;
+  const confirmed = items.filter((a) => a.confirmed).length;
 
   return (
     <View style={{ flex: 1 }} testID="admin-reminders-view">
@@ -43,7 +50,7 @@ export function RemindersView() {
             <View style={{ marginBottom: spacing.sm }}>
               <Text style={styles.title}>Lembretes de véspera</Text>
               <Text style={styles.sub} testID="reminders-summary">
-                {q.data ? `${formatDateLong(q.data.date)} • ${items.length} agendamento(s) • ${pending} a lembrar` : ""}
+                {q.data ? `${formatDateLong(q.data.date)} • ${items.length} agendamento(s) • ${pending} a lembrar • ${confirmed} confirmado(s)` : ""}
               </Text>
             </View>
           }
@@ -51,7 +58,19 @@ export function RemindersView() {
           renderItem={({ item }) => (
             <View>
               {item.reminded && <Text style={styles.sent} testID={`reminder-sent-${item.id}`}>✓ Lembrete enviado</Text>}
-              <AppointmentCard a={item} whatsText={reminderText(item)} onWhats={() => markReminded(item)} />
+              <AppointmentCard
+                a={item}
+                whatsText={reminderText(item)}
+                onWhats={() => markReminded(item)}
+                actions={
+                  <CardAction
+                    testID={`reminder-confirm-${item.id}`}
+                    icon={item.confirmed ? "checkmark-done" : "thumbs-up-outline"}
+                    label={item.confirmed ? "Desmarcar confirmação" : "Cliente confirmou"}
+                    onPress={() => toggleConfirm(item)}
+                  />
+                }
+              />
             </View>
           )}
         />

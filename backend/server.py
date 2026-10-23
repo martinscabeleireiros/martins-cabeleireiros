@@ -93,6 +93,7 @@ class Appointment(BaseDocument):
     notes: str = ""
     status: str = "agendado"  # agendado | concluido | cancelado
     reminded: bool = False
+    confirmed: bool = False
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
@@ -141,12 +142,14 @@ async def day_status(d: str):
     return True, ""
 
 
-async def compute_slots(d: str, duration: int) -> List[str]:
+async def compute_slots(d: str, duration: int, exclude_id: Optional[str] = None) -> List[str]:
     open_, _ = await day_status(d)
     if not open_:
         return []
     busy = []
     async for a in db.appointments.find({"date": d, "status": {"$ne": "cancelado"}}):
+        if exclude_id and str(a["_id"]) == exclude_id:
+            continue
         busy.append((a["start_min"], a["end_min"]))
     now = datetime.now(TZ)
     min_start = OPEN_MIN
@@ -265,12 +268,12 @@ async def services():
 
 
 @api.get("/slots")
-async def slots(date: str, service_id: str):
+async def slots(date: str, service_id: str, exclude_id: Optional[str] = None):
     svc = SERVICE_MAP.get(service_id)
     if not svc:
         raise HTTPException(404, "Serviço não encontrado")
     open_, reason = await day_status(date)
-    return {"date": date, "open": open_, "reason": reason, "slots": await compute_slots(date, svc["duration"])}
+    return {"date": date, "open": open_, "reason": reason, "slots": await compute_slots(date, svc["duration"], exclude_id)}
 
 
 class AppointmentIn(BaseModel):
@@ -326,6 +329,7 @@ async def list_appointments(date: str, admin=Depends(current_admin)):
 class StatusIn(BaseModel):
     status: Optional[str] = None
     reminded: Optional[bool] = None
+    confirmed: Optional[bool] = None
 
 
 @api.patch("/admin/appointments/{appt_id}")
@@ -335,6 +339,8 @@ async def update_appointment(appt_id: str, body: StatusIn, admin=Depends(current
         if body.status not in ("agendado", "concluido", "cancelado"):
             raise HTTPException(400, "Status inválido")
         upd["status"] = body.status
+    if body.confirmed is not None:
+        upd["confirmed"] = body.confirmed
     if body.reminded is not None:
         upd["reminded"] = body.reminded
     if not ObjectId.is_valid(appt_id):
@@ -356,6 +362,68 @@ async def delete_appointment(appt_id: str, admin=Depends(current_admin)):
         raise HTTPException(400, "Só é possível excluir agendamentos cancelados")
     await db.appointments.delete_one({"_id": ObjectId(appt_id)})
     return {"ok": True}
+
+
+class RescheduleIn(BaseModel):
+    date: str
+    time: str
+
+
+@api.post("/admin/appointments/{appt_id}/reschedule")
+async def reschedule(appt_id: str, body: RescheduleIn, admin=Depends(current_admin)):
+    if not ObjectId.is_valid(appt_id):
+        raise HTTPException(404, "Agendamento não encontrado")
+    doc = await db.appointments.find_one({"_id": ObjectId(appt_id)})
+    if not doc:
+        raise HTTPException(404, "Agendamento não encontrado")
+    if body.time not in await compute_slots(body.date, doc["duration"], appt_id):
+        raise HTTPException(409, "Horário indisponível. Escolha outro horário")
+    start = to_min(body.time)
+    upd = {"date": body.date, "time": body.time, "start_min": start, "end_min": start + doc["duration"],
+           "end_time": fmt_min(start + doc["duration"]), "status": "agendado", "reminded": False, "confirmed": False}
+    doc = await db.appointments.find_one_and_update({"_id": ObjectId(appt_id)}, {"$set": upd}, return_document=True)
+    return Appointment.from_mongo(doc)
+
+
+@api.get("/admin/report")
+async def report(month: str, admin=Depends(current_admin)):
+    if not re.fullmatch(r"\d{4}-\d{2}", month):
+        raise HTTPException(400, "Mês inválido")
+    docs = await db.appointments.find({"date": {"$regex": f"^{month}-"}}).to_list(5000)
+    done = [d for d in docs if d["status"] == "concluido"]
+    pending = [d for d in docs if d["status"] == "agendado"]
+    by_svc = {}
+    for d in docs:
+        if d["status"] == "cancelado":
+            continue
+        e = by_svc.setdefault(d["service_id"], {"service_id": d["service_id"], "name": d["service_name"], "count": 0, "revenue": 0.0})
+        e["count"] += 1
+        e["revenue"] += d["price"] if d["status"] == "concluido" else 0
+    top = sorted(by_svc.values(), key=lambda x: (-x["count"], -x["revenue"]))
+    return {
+        "month": month,
+        "revenue": sum(d["price"] for d in done),
+        "expected": sum(d["price"] for d in pending),
+        "total": len(done) + len(pending),
+        "completed": len(done),
+        "scheduled": len(pending),
+        "cancelled": len(docs) - len(done) - len(pending),
+        "confirmed": sum(1 for d in docs if d.get("confirmed") and d["status"] != "cancelado"),
+        "unique_clients": len({d["client_phone"] for d in docs if d["status"] != "cancelado"}),
+        "avg_ticket": (sum(d["price"] for d in done) / len(done)) if done else 0,
+        "top_services": top,
+    }
+
+
+@api.get("/qr")
+async def qr(data: str = Query(..., max_length=500)):
+    import io
+    import qrcode
+    from fastapi.responses import Response
+    img = qrcode.make(data, box_size=12, border=2)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return Response(buf.getvalue(), media_type="image/png")
 
 
 @api.get("/admin/reminders")

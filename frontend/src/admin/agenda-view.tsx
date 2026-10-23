@@ -7,6 +7,7 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Tex
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppointmentCard, CardAction, EmptyState } from "@/src/admin/appointment-card";
+import { RescheduleSheet } from "@/src/admin/reschedule-sheet";
 import { api } from "@/src/api";
 import { useToast } from "@/src/components/toast";
 import { Appointment, formatDateLong, formatPrice } from "@/src/constants";
@@ -17,6 +18,7 @@ export function AgendaView() {
   const toast = useToast();
   const qc = useQueryClient();
   const [date, setDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [resched, setResched] = useState<Appointment | null>(null);
   const q = useQuery({
     queryKey: ["admin-appts", date],
     queryFn: () => api<Appointment[]>(`/admin/appointments?date=${date}`, { auth: true }),
@@ -30,6 +32,17 @@ export function AgendaView() {
       await api(`/admin/appointments/${a.id}`, { method: "PATCH", auth: true, body: { status } });
       qc.invalidateQueries({ queryKey: ["admin-appts"] });
       toast(status === "concluido" ? "Atendimento concluído" : status === "cancelado" ? "Agendamento cancelado — horário liberado" : "Agendamento reativado", "success");
+    } catch (e: any) {
+      toast(e.message, "error");
+    }
+  };
+
+  const toggleConfirm = async (a: Appointment) => {
+    try {
+      await api(`/admin/appointments/${a.id}`, { method: "PATCH", auth: true, body: { confirmed: !a.confirmed } });
+      qc.invalidateQueries({ queryKey: ["admin-appts"] });
+      qc.invalidateQueries({ queryKey: ["admin-reminders"] });
+      toast(a.confirmed ? "Confirmação removida" : "Presença confirmada", "success");
     } catch (e: any) {
       toast(e.message, "error");
     }
@@ -83,6 +96,13 @@ export function AgendaView() {
                 item.status === "agendado" ? (
                   <>
                     <CardAction testID={`appointment-done-${item.id}`} icon="checkmark-circle-outline" label="Concluir" onPress={() => setStatus(item, "concluido")} />
+                    <CardAction
+                      testID={`appointment-confirm-${item.id}`}
+                      icon={item.confirmed ? "checkmark-done" : "thumbs-up-outline"}
+                      label={item.confirmed ? "Desmarcar confirmação" : "Confirmou"}
+                      onPress={() => toggleConfirm(item)}
+                    />
+                    <CardAction testID={`appointment-reschedule-${item.id}`} icon="swap-horizontal-outline" label="Remarcar" onPress={() => setResched(item)} />
                     <CardAction testID={`appointment-cancel-${item.id}`} icon="close-circle-outline" label="Cancelar" onPress={() => setStatus(item, "cancelado")} />
                   </>
                 ) : (
@@ -98,6 +118,16 @@ export function AgendaView() {
           )}
         />
       )}
+      <RescheduleSheet
+        appt={resched}
+        onClose={() => setResched(null)}
+        onDone={(a) => {
+          qc.invalidateQueries({ queryKey: ["admin-appts"] });
+          qc.invalidateQueries({ queryKey: ["admin-reminders"] });
+          toast(`Remarcado para ${dayjs(a.date).format("DD/MM")} às ${a.time}`, "success");
+          setDate(a.date);
+        }}
+      />
       <Pressable testID="agenda-new-appointment-button" onPress={() => router.push("/agendar")} style={[styles.fab, { bottom: insets.bottom + 16 }]}>
         <Ionicons name="add" size={28} color={colors.onBrandPrimary} />
       </Pressable>

@@ -6,6 +6,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { QrCard } from "@/src/admin/qr-card";
 import { api } from "@/src/api";
 import { useToast } from "@/src/components/toast";
 import { GoldButton } from "@/src/components/ui";
@@ -58,6 +59,7 @@ export function SettingsView() {
 
   return (
     <KeyboardAwareScrollView bottomOffset={40} contentContainerStyle={{ paddingBottom: insets.bottom + spacing.xl }} keyboardShouldPersistTaps="handled" testID="admin-settings-view">
+      <QrCard />
       <Text style={styles.title}>Bloquear dias e feriados</Text>
       <Text style={styles.sub}>Domingos já ficam fechados automaticamente.</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hRow}>

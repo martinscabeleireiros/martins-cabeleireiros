@@ -29,6 +29,7 @@ export type Appointment = {
   notes: string;
   status: "agendado" | "concluido" | "cancelado";
   reminded: boolean;
+  confirmed: boolean;
 };
 
 export type Client = { id: string; name: string; phone: string; source: string };

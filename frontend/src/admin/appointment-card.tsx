@@ -37,6 +37,12 @@ export function AppointmentCard({
         </View>
         <Text style={styles.service}>{a.service_name} • {formatDuration(a.duration)} • {formatPrice(a.price)}</Text>
         <Text style={styles.phone}>{formatPhone(a.client_phone)}</Text>
+        {a.confirmed && a.status !== "cancelado" && (
+          <View style={styles.confirmed} testID={`appointment-confirmed-${a.id}`}>
+            <Ionicons name="checkmark-done" size={14} color={colors.onSuccess} />
+            <Text style={styles.confirmedText}>Presença confirmada</Text>
+          </View>
+        )}
         <View style={styles.actions}>
           <Pressable
             testID={`appointment-whatsapp-${a.id}`}
@@ -88,6 +94,8 @@ const styles = StyleSheet.create({
   badgeText: { fontSize: 11, fontWeight: "700" },
   service: { color: colors.onSurfaceSecondary, fontSize: 13 },
   phone: { color: colors.muted, fontSize: 13 },
+  confirmed: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", backgroundColor: colors.success, paddingHorizontal: spacing.sm, paddingVertical: 2, borderRadius: radius.pill },
+  confirmedText: { color: colors.onSuccess, fontSize: 11, fontWeight: "700" },
   actions: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.sm },
   action: {
     flexDirection: "row", alignItems: "center", gap: 6, height: 36, paddingHorizontal: spacing.md,

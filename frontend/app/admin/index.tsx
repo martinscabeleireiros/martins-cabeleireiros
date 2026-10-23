@@ -9,6 +9,7 @@ import { Image } from "expo-image";
 import { AgendaView } from "@/src/admin/agenda-view";
 import { ClientsView } from "@/src/admin/clients-view";
 import { RemindersView } from "@/src/admin/reminders-view";
+import { ReportView } from "@/src/admin/report-view";
 import { SettingsView } from "@/src/admin/settings-view";
 import { api, logout, TOKEN_KEY, USER_KEY } from "@/src/api";
 import { useToast } from "@/src/components/toast";
@@ -20,6 +21,7 @@ const TABS = [
   { key: "agenda", label: "Agenda", icon: "calendar-outline" },
   { key: "lembretes", label: "Lembretes", icon: "notifications-outline" },
   { key: "clientes", label: "Clientes", icon: "people-outline" },
+  { key: "resumo", label: "Resumo", icon: "stats-chart-outline" },
   { key: "ajustes", label: "Ajustes", icon: "settings-outline" },
 ] as const;
 
@@ -141,6 +143,7 @@ function Dashboard({ name, onLogout }: { name: string; onLogout: () => void }) {
         {tab === "agenda" && <AgendaView />}
         {tab === "lembretes" && <RemindersView />}
         {tab === "clientes" && <ClientsView />}
+        {tab === "resumo" && <ReportView />}
         {tab === "ajustes" && <SettingsView />}
       </View>
     </View>
