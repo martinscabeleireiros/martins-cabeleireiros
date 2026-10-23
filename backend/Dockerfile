@@ -15,6 +15,10 @@ RUN pip install --no-cache-dir \
     requests==2.31.0 \
     bcrypt==4.1.2
 
+# Copia todo o conteúdo do repositório
 COPY . /app
+
+# Entra na pasta backend onde está o teu código
+WORKDIR /app/backend
 
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "10000"]
