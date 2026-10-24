@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir \
     pydantic==2.5.3 \
     python-dotenv==1.0.1 \
     python-jose==3.3.0 \
+    PyJWT==2.8.0 \
     passlib==1.7.4 \
     email-validator==2.1.0 \
     requests==2.31.0 \
