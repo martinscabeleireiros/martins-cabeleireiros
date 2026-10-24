@@ -12,7 +12,8 @@ RUN pip install --no-cache-dir \
     python-jose==3.3.0 \
     passlib==1.7.4 \
     email-validator==2.1.0 \
-    requests==2.31.0
+    requests==2.31.0 \
+    bcrypt==4.0.1
 
 # Copia todo o conteúdo do repositório
 COPY . /app
