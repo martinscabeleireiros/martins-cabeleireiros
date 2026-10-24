@@ -7,4 +7,3 @@ WORKDIR /app/backend
 EXPOSE 10000
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "10000"]
 
-db = client.get_default_database()
