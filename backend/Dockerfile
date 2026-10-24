@@ -1,26 +1,9 @@
-FROM python:3.11-slim
+import certifi
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
 
-WORKDIR /app
+MONGO_URL = os.environ.get("MONGO_URL")
 
-RUN pip install --no-cache-dir \
-    fastapi==0.110.1 \
-    uvicorn==0.29.0 \
-    motor==3.4.0 \
-    pymongo==4.6.3 \
-    pydantic==2.5.3 \
-    python-dotenv==1.0.1 \
-    python-jose==3.3.0 \
-    PyJWT==2.8.0 \
-    passlib==1.7.4 \
-    email-validator==2.1.0 \
-    requests==2.31.0 \
-    bcrypt==4.0.1 \
-    python-multipart==0.0.9
-
-# Copia todo o conteúdo do repositório
-COPY . /app
-
-# Entra na pasta backend onde está o teu código
-WORKDIR /app/backend
-
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "10000"]
+# Isto diz ao Python para usar os certificados seguros do Render/certifi
+client = AsyncIOMotorClient(MONGO_URL, tlsCAFile=certifi.where())
+db = client.get_default_database()
