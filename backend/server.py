@@ -487,30 +487,4 @@ async def delete_client(client_id: str, admin=Depends(current_admin)):
 
 
 async def import_pairs(pairs, source):
-    added = 0
-    for name, phone in pairs:
-        if await upsert_client(name, phone, source):
-            added += 1
-    return {"read": len(pairs), "added": added, "skipped": len(pairs) - added}
-
-
-@api.post("/admin/clients/import-vcf")
-async def import_vcf(file: UploadFile = File(...), admin=Depends(current_admin)):
-    raw = await file.read()
-    text = raw.decode("utf-8", "ignore")
-    if "BEGIN:VCARD" not in text.upper():
-        raise HTTPException(400, "Arquivo .vcf inválido")
-    return await import_pairs(parse_vcf(text), "vcf")
-
-
-class ContactsIn(BaseModel):
-    contacts: List[ClientIn]
-
-
-@api.post("/admin/clients/import-list")
-async def import_list(body: ContactsIn, admin=Depends(current_admin)):
-    pairs = []
-    for c in body.contacts:
-        p = normalize_phone(c.phone)
-        if p:
-            pairs.append((c.name,
+    
