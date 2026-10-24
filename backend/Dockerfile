@@ -14,7 +14,8 @@ RUN pip install --no-cache-dir \
     passlib==1.7.4 \
     email-validator==2.1.0 \
     requests==2.31.0 \
-    bcrypt==4.0.1
+    bcrypt==4.0.1 \
+    python-multipart==0.0.9
 
 # Copia todo o conteúdo do repositório
 COPY . /app
