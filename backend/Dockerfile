@@ -2,7 +2,8 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir \
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir --no-build-isolation \
     fastapi==0.110.1 \
     uvicorn==0.29.0 \
     motor==3.4.0 \
