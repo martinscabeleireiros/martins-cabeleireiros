@@ -1,9 +1,10 @@
-import certifi
-from motor.motor_asyncio import AsyncIOMotorClient
-import os
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+WORKDIR /app/backend
+EXPOSE 10000
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "10000"]
 
-MONGO_URL = os.environ.get("MONGO_URL")
-
-# Isto diz ao Python para usar os certificados seguros do Render/certifi
-client = AsyncIOMotorClient(MONGO_URL, tlsCAFile=certifi.where())
 db = client.get_default_database()
