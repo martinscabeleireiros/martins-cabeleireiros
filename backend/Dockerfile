@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir \
     uvicorn==0.29.0 \
     motor==3.4.0 \
     pymongo==4.6.3 \
-    pydantic==2.6.4 \
+    pydantic==2.5.3 \
     python-dotenv==1.0.1 \
     python-jose==3.3.0 \
     passlib==1.7.4 \
